@@ -133,3 +133,6 @@ class TestDelete(APITestCase):
 
         self.assertEqual(data['is_active'], False)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        response = client.delete(reverse('user-detail', args=['invalid']))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
