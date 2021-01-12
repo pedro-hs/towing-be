@@ -10,5 +10,6 @@ urlpatterns = [
     path('token-auth/', obtain_jwt_token),
     path('token-verify/', verify_jwt_token),
     path('docs/', include_docs_urls(title='Towing API')),
+    path('password-reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
     path('', include(users_router.urls))
 ]

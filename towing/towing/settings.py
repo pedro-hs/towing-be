@@ -1,28 +1,43 @@
 """Towing settings"""
+import os
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+from dotenv import find_dotenv, load_dotenv
+
+load_dotenv(find_dotenv())
+
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '!!k^n%d_$vuptahu@dtl!2%9oer6jn06xz4-*2z-$aq@siu$e8'  # TODO: export to environ
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+def dirs_join(directories):
+    for directory in directories:
+        return os.path.join(BASE_DIR, directory)
+
+
+SECRET_KEY = os.environ['SECRET_KEY']
+
+DEBUG = os.environ['DEBUG']
 
 ALLOWED_HOSTS = []
 
-INSTALLED_APPS = [
+django_apps = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'corsheaders',
-    'users'
 ]
+third_party_apps = [
+    'rest_framework',
+    'django_rest_passwordreset',
+    'corsheaders',
+]
+towing_apps = [
+    'users',
+]
+INSTALLED_APPS = [*django_apps, *third_party_apps, *towing_apps]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -54,8 +69,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'towing.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -80,21 +93,21 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
-# https://docs.djangoproject.com/en/3.1/topics/i18n/
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 STATIC_URL = '/static/'
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = os.environ['EMAIL_HOST']
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+EMAIL_PORT = 587
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
@@ -109,7 +122,9 @@ REST_FRAMEWORK = {
 }
 
 CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',
+    os.environ['FRONT_END_URL'],
 )
 
 AUTH_USER_MODEL = 'users.User'
+
+GOOGLE_API_KEY = os.environ['GOOGLE_API_KEY']
