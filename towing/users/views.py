@@ -25,7 +25,7 @@ class PasswordResetView:
         host_url = instance.request.get_host()
         site_url = (host_url if host_url in settings.CORS_ORIGIN_WHITELIST
                     else settings.CORS_ORIGIN_WHITELIST[0])
-        link = f'{site_url}/password-reset/{reset_password_token.key}'
+        link = f'{site_url}/auth/change-password/{reset_password_token.user.email}/{reset_password_token.key}'
 
         subject = 'Password reset'
         message = f'Click on link to create a new password. {link}'
