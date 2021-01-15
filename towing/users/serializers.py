@@ -9,14 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('cpf', 'email', 'full_name', 'mobile_number', 'password', 'is_active', 'is_staff')
         extra_kwargs = {'password': {'write_only': True}}
-        read_only_fields = ('is_active', 'is_staff')
-
-    def create(self, validated_data):
-        password = validated_data.pop('password', None)
-        instance = self.Meta.model(**validated_data)
-        instance.set_password(password)
-        instance.save()
-        return instance
+        read_only_fields = ('is_active', )
 
     def get_fields(self, *args, **kwargs):
         fields = super().get_fields(*args, **kwargs)

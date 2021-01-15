@@ -5,6 +5,9 @@ from django.core.mail import send_mail
 from django.dispatch import receiver
 from django.urls import reverse
 from django_rest_passwordreset.signals import reset_password_token_created
+from rest_framework import status
+from rest_framework.permissions import AllowAny, IsAdminUser
+from rest_framework.response import Response
 from utils import viewsets
 
 from .models import User
@@ -17,6 +20,24 @@ class UserViewSet(viewsets.ModelViewSet):
 
     class Meta:
         model = User
+
+    def get_permissions(self):
+        self.permission_classes = (IsAdminUser,)
+
+        if self.request.method == 'POST':
+            self.permission_classes = (AllowAny,)
+
+        return super().get_permissions()
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        password = request.data['password']
+        instance = self.Meta.model(**serializer.data)
+        instance.set_password(password)
+        headers = self.get_success_headers(serializer.data)
+        instance.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class PasswordResetView:
