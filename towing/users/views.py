@@ -1,8 +1,7 @@
 from django.conf import settings
-# from django.template.loader import render_to_string
 from django.core.mail import send_mail
-# from django.core.mail import EmailMultiAlternatives
 from django.dispatch import receiver
+from django.forms.models import model_to_dict
 from django.urls import reverse
 from django_rest_passwordreset.signals import reset_password_token_created
 from rest_framework import status
@@ -33,15 +32,21 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         password = request.data['password']
+
         instance = self.Meta.model(**serializer.data)
         instance.set_password(password)
-        headers = self.get_success_headers(serializer.data)
         instance.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+        data = UserSerializer(instance).data
+        headers = self.get_success_headers(data)
+        return Response(data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def get_queryset(self):
+        return super().get_queryset().filter(is_active=True)
 
 
 class PasswordResetView:
-    @receiver(reset_password_token_created)
+    @ receiver(reset_password_token_created)
     def send_email(instance, reset_password_token, *args, **kwargs):
         host_url = instance.request.get_host()
         site_url = (host_url if host_url in settings.CORS_ORIGIN_WHITELIST

@@ -7,9 +7,9 @@ from .models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('cpf', 'email', 'full_name', 'mobile_number', 'password', 'is_active', 'is_staff')
+        fields = ('cpf', 'email', 'full_name', 'contact', 'password', 'is_active', 'is_staff')
         extra_kwargs = {'password': {'write_only': True}}
-        read_only_fields = ('is_active', )
+        read_only_fields = ('is_active', 'is_staff')
 
     def get_fields(self, *args, **kwargs):
         fields = super().get_fields(*args, **kwargs)
@@ -46,8 +46,8 @@ class UserSerializer(serializers.ModelSerializer):
 
         raise serializers.ValidationError('Cannot update cpf')
 
-    def validate_mobile_number(self, value):
-        return self.__validate_numeric(value, 'mobile number', len(value) > 8)
+    def validate_contact(self, value):
+        return self.__validate_numeric(value, 'contact', len(value) > 8)
 
     def __validate_numeric(self, value, field_name, valid_length):
         if isinstance(value, str) and value.isnumeric() and valid_length:

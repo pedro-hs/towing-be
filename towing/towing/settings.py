@@ -9,12 +9,6 @@ load_dotenv(find_dotenv())
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-def dirs_join(directories):
-    for directory in directories:
-        return os.path.join(BASE_DIR, directory)
-
-
 SECRET_KEY = os.environ['SECRET_KEY']
 
 DEBUG = os.environ['DEBUG']
@@ -77,8 +71,6 @@ DATABASES = {
     }
 }
 
-# Password validation
-# https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -100,8 +92,6 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.1/howto/static-files/
 STATIC_URL = '/static/'
 
 EMAIL_USE_TLS = True
@@ -129,3 +119,7 @@ CORS_ORIGIN_WHITELIST = (
 AUTH_USER_MODEL = 'users.User'
 
 GOOGLE_API_KEY = os.environ['GOOGLE_API_KEY']
+
+JWT_AUTH = {
+    'JWT_ALLOW_REFRESH': True,
+}
