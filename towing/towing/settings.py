@@ -1,4 +1,5 @@
 """Towing settings"""
+import datetime
 import os
 from pathlib import Path
 
@@ -66,8 +67,12 @@ WSGI_APPLICATION = 'towing.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ['DB_NAME'],
+        'HOST': os.environ['DB_HOST'],
+        'PORT': os.environ['DB_PORT'],
+        'USER': os.environ['DB_USER_NAME'],
+        'PASSWORD': os.environ['DB_USER_PASSWORD'],
     }
 }
 
@@ -122,4 +127,6 @@ GOOGLE_API_KEY = os.environ['GOOGLE_API_KEY']
 
 JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True,
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=12),
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=1)
 }
