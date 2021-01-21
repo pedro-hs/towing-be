@@ -1,5 +1,5 @@
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
-                                        PermissionsMixin, UserManager)
+                                        UserManager)
 from django.db import models
 
 
@@ -33,19 +33,32 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
-class User(AbstractBaseUser, PermissionsMixin):
+class User(AbstractBaseUser):
+    USERNAME_FIELD = 'email'
+
+    CHOICES = [
+        ('admin', 'admin'),
+        ('user', 'user'),
+    ]
+
     cpf = models.CharField('CPF', max_length=11, primary_key=True, unique=True)
     email = models.EmailField('email address', unique=True)
     full_name = models.CharField('full name', max_length=255)
     contact = models.CharField('contact', max_length=15)
     is_active = models.BooleanField('is active', default=True)
     is_staff = models.BooleanField('is staff', default=False)
+    is_superuser = models.BooleanField('is superuser', default=False)
+    role = models.CharField('user role', default='user', choices=CHOICES, max_length=20)
 
     objects = UserManager()
-
-    USERNAME_FIELD = 'email'
 
     class Meta:
         db_table = 'users'
         verbose_name = 'User'
         verbose_name_plural = 'Users'
+
+    def has_perm(self, perm, obj=None):
+        return self.is_superuser
+
+    def has_module_perms(self, app_label):
+        return self.is_superuser
