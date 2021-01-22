@@ -103,7 +103,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST = os.environ['EMAIL_HOST']
 EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
 EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
-EMAIL_PORT = 587
+EMAIL_PORT = os.environ['EMAIL_PORT']
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
@@ -128,5 +128,6 @@ GOOGLE_API_KEY = os.environ['GOOGLE_API_KEY']
 JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True,
     'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=12),
+    'JWT_PAYLOAD_HANDLER': 'utils.utils.custom_jwt',
     'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=1)
 }
