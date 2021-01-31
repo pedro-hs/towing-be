@@ -31,15 +31,21 @@ class UserViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        password = request.data['password']
 
         instance = self.Meta.model(**serializer.data)
+        password = request.data['password']
         instance.set_password(password)
         instance.save()
 
         data = UserSerializer(instance).data
         headers = self.get_success_headers(data)
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_update(self, serializer):
+        if serializer.validated_data.get('role', 'user') == 'admin':
+            serializer.validated_data['is_staff'] = True
+
+        serializer.save()
 
     def get_queryset(self):
         return super().get_queryset().filter(is_active=True)
